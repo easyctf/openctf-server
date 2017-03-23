@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+{% block title %}Scoreboard{% endblock %}
+
+{% macro scoreboard_table(ranked) %}
+    <table class="table table-striped table-hover">
+        <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Team Name</th>
+            <th>School</th>
+            <th>Points</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% set rank = [1] %}
+        {% for n, team, school, score in scoreboard %}
+            <tr>
+                <td>{{ rank | length }}</td>
+                <td><a href="{{ url_for("teams.profile", tid=n) }}">{{ team }}</a></td>
+                <td>{{ school }}</td>
+                <td>{{ score }}</td>
+                {% if rank.append(0) %}{% endif %}
+            </tr>
+            {# {% if not(ranked and team.observer) %}
+                <tr>
+                    <td>{{ rank | length }}</td>
+                    <td><a href="{{ url_for("teams.profile", tid=team.tid) }}">{{ team.teamname }}</a></td>
+                    <td>{{ team.school }}</td>
+                    <td>{{ team.size }}</td>
+                    <td>{{ team.points() }}</td>
+                </tr>
+                {% if rank.append(0) %}{% endif %}
+            {% endif %} #}
+        {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}
+
+{% block content %}
+    <div class="section gradient">
+        <div class="container">
+            <h1>{% if school %}<b>{{ school }}</b> {% endif %}Scoreboard</h1>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="container">
+            {{ scoreboard_table(True) }}
+            {# {% if school %}
+                {% cache 300, ("/scoreboard/%s" % school.id) %}
+                    {{ scoreboard_table(False) }}
+                {% endcache %}
+            {% else %}
+                {% cache 300, "/scoreboard" %}
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#ranked" aria-controls="ranked" role="tab" data-toggle="tab">Ranked Teams</a></li>
+                        <li role="presentation"><a href="#unranked" aria-controls="unranked" role="tab" data-toggle="tab">All Teams</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="ranked">
+                            {{ scoreboard_table(True) }}
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="unranked">
+                            {{ scoreboard_table(False) }}
+                        </div>
+                    </div>
+                {% endcache %}
+            {% endif %} #}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+{% from "templates.html" import render_field, render_generic_field, flashes %}
+{% block title %}Create or Join Team{% endblock %}
+
+{% block content %}
+    <div class="section">
+        <div class="container">
+            {{ flashes() }}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Create Team</h4>
+                        </div>
+                        <div class="panel-body">
+                            <form method="POST">
+                                {{ create_team_form.csrf_token }}
+                                <fieldset>
+                                    {{ render_field(create_team_form.teamname) }}
+                                    {{ render_field(create_team_form.school) }}
+                                </fieldset>
+                                {{ create_team_form.submit(class_="btn btn-primary") }}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Join Team</h4>
+                        </div>
+                        {% set pending_invitations = current_user.pending_invitations() %}
+                        {% if pending_invitations %}
+                            <div class="panel-body">
+                                Here are your current invitations. Click "Accept" to join the team.
+                            </div>
+                            <div class="list-group">
+                                {% for invite in pending_invitations %}
+                                    <div class="list-group-item">
+                                        <a href="{{ url_for('teams.accept', id=invite.id) }}" class="badge">Accept</a>
+                                        <a href="{{ url_for('teams.profile', tid=invite._fr) }}">{{ invite.fr.teamname }}</a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="panel-body">
+                                To join a team, you must have an invitation from that team. Contact your team to send you an
+                                invitation, or find their team profile page and request to join their team.
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% set pending_requests = current_user.pending_requests() %}
+                    {% if pending_requests %}
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">Sent Requests</h4>
+                            </div>
+                            <div class="list-group">
+                                {% for req in pending_requests %}
+                                    <div class="list-group-item">
+                                        <a href="javascript:void(0);" class="badge">Withdraw</a>
+                                        <a href="{{ url_for('teams.profile', tid=req._to) }}">{{ req.to.teamname }}</a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.get("{{ url_for("teams.schools") }}", function (body) {
+                var data = JSON.parse(body);
+                $("input#create-school").typeahead({
+                    source: data.map(function (school) {
+                        return school.name;
+                    })
+                });
+            });
+        });
+    </script>
+{% endblock %}

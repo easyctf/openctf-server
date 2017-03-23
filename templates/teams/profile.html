@@ -1,0 +1,318 @@
+{% from "templates.html" import render_field, flashes %}
+{% extends "layout.html" %}
+{% block title %}{{ team.teamname }}{% endblock %}
+
+{% block content %}
+    <div class="section gradient">
+        <div class="container jumbotron">
+            <center>
+                <h1>{{ team.teamname }}</h1>
+                <h4><i class="fa fa-fw fa-university"></i> {{ team.school }}
+                </h4>
+                <p></p>
+                <div>
+                    {% if current_user.tid == team.tid %}
+                        <div class="label label-success">
+                            <i class="fa fa-fw fa-flag"></i> I'm in the team!
+                        </div>
+                    {% endif %}
+                    {% if team.observer %}
+                        <div class="label label-warning" data-toggle="tooltip" data-placement="top" title="This team isn't eligible for prizes.">
+                            <i class="fa fa-fw fa-globe"></i> Observer
+                        </div>
+                    {% endif %}
+                </div>
+            </center>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            {{ flashes() }}
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    {# {% cache 300, ("/teams/profile/%s/statistics" % team.tid) %}
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">Statistics</h4>
+                            </div>
+                            <div class="panel-body">
+                                <div>
+                                    <b class="large-text">{{ team.place()[1] }}</b> place
+                                    {% if team.observer %}
+                                        <div class="label label-warning">
+                                            <i class="fa fa-fw fa-globe"></i> UNRANKED
+                                        </div>{% endif %}
+                                </div>
+                                <div>
+                                    <b class="large-text">{{ team.points() }}</b> point{{ "" if team.points() == 1 else "s" }}
+                                </div>
+                                <div>
+                                    <b class="large-text">{{ team.size }}</b> member{{ "" if team.size == 1 else "s" }}
+                                </div>
+                                {% if current_user.is_authenticated and current_user.tid != team.tid %}
+                                    <hr/>
+                                    <div style="text-align: center;">
+                                        <a href="javascript:void(0);"><i class="fa fa-info-circle"></i> Report Team</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endcache %} #}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Team Members</h4>
+                        </div>
+                        <div class="list-group">
+                            {% cache 1200, ("/teams/profile/%s/members" % team.tid) %}
+                                {% for member in team.members %}
+                                    <div class="list-group-item">
+                                        {% if current_user.uid == team.owner and member.uid != team.owner %}
+                                            <a class="badge" href="{{ url_for('teams.evict', uid=member.uid) }}"><i class="fa fa-times"></i></a>
+                                        {% endif %}
+                                        <table>
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ url_for("users.profile", uid=member.uid) }}">
+                                                        <img src="{{ member.avatar }}" style="width:40px;height:40px;margin-right:10px;border:1px solid #ddd;border-radius:40px;"/>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <h4 class="list-group-item-heading" style="display:inline-block;">{{ member.name }}</h4>
+                                                    {% if member.uid == team.owner %}
+                                                        <div class="label label-info">Captain</div>
+                                                    {% endif %}
+                                                    <p class="list-group-item-text">
+                                                        <a href="{{ url_for('users.profile', uid=member.uid) }}">@{{ member.username }}</a>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                {% endfor %}
+                            {% endcache %}
+                        </div>
+                        {% if add_member_form %}
+                            <div class="panel-footer">
+                                <form method="POST">
+                                    {{ add_member_form.csrf_token }}
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            {% if add_member_form.username.errors %}
+                                                <p style="color:#F00;">
+                                                    {% for error in add_member_form.username.errors %}
+                                                        {{ error }}
+                                                    {% endfor %}
+                                                </p>
+                                            {% endif %}
+                                            <div class="input-group">
+                                                {{ add_member_form.username(class_="form-control") }}
+                                                <span class="input-group-btn">
+                                            {{ add_member_form.submit(class_="btn btn-success") }}
+                                        </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        {% elif current_user.is_authenticated and not current_user.tid %}
+                            <div class="panel-footer">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        {% if team.pending_requests(fr=current_user.uid) %}
+                                            <a href="javascript:void(0);" class="btn btn-success col-xs-12" disabled><i class="fa fa-fw fa-check"></i> Invitation sent</a>
+                                        {% elif team.pending_invitations(to=current_user.uid) %}
+                                            <a href="{{ url_for('teams.accept', id=team.pending_invitations(to=current_user.uid).id) }}" class="btn btn-success col-xs-12"><i class="fa fa-fw fa-check"></i> Accept Invitation</a>
+                                        {% else %}
+                                            <a href="{{ url_for('teams.request', tid=team.tid) }}" class="btn btn-primary col-xs-12"><i class="fa fa-fw fa-plus"></i> Request to Join</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if current_user.uid == team.owner %}
+                        {% set pending_invitations = team.pending_invitations() %}
+                        {% if pending_invitations %}
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">Outgoing Invitations</h4>
+                                </div>
+                                <div class="list-group">
+                                    {% for invite in pending_invitations %}
+                                        <div class="list-group-item">
+                                            <h4 class="list-group-item-heading">{{ invite.to.name }}</h4>
+                                            <p class="list-group-item-text">
+                                                <a href="{{ url_for('users.profile', uid=invite._to) }}">@{{ invite.to.username }}</a>
+                                            </p>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% set pending_requests = team.pending_requests() %}
+                        {% if pending_requests %}
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">Incoming Requests</h4>
+                                </div>
+                                <div class="list-group">
+                                    {% for invite in pending_requests %}
+                                        <div class="list-group-item">
+                                            <a class="badge" href="{{ url_for('teams.accept', id=invite.id) }}"><i class="fa fa-check"></i></a>
+                                            <h4 class="list-group-item-heading">{{ invite.fr.name }}</h4>
+                                            <p class="list-group-item-text">
+                                                <a href="{{ url_for('users.profile', uid=invite._fr) }}">@{{ invite.fr.username }}</a>
+                                            </p>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <div class="col-sm-9 col-xs-12">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <!--<li role="presentation"><a href="#activity" aria-controls="activity" role="tab" data-toggle="tab">Activity</a></li>-->
+                        <li role="presentation" class="active">
+                            <a href="#solves" aria-controls="solves" role="tab" data-toggle="tab">Solves</a>
+                        </li>
+                        {% if current_user.is_authenticated and current_user.uid == team.owner %}
+                            <li role="presentation">
+                                <a href="#manage" aria-controls="manage" role="tab" data-toggle="tab">Manage</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    <div class="tab-content">
+                        <!--<div role="tabpanel" class="tab-pane" id="activity">
+                        </div>-->
+                        <div role="tabpanel" class="tab-pane active" id="solves">
+
+                            <div id="progression_chart"></div>
+                            {% set solves = team.solves | sort(attribute="date", reverse=True) %}
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Problem</th>
+                                    <th>Category</th>
+                                    <th>Value</th>
+                                    <th>Solver</th>
+                                    <th>Time</th>
+                                </tr>
+                                </thead>
+                                {% for solve in solves %}
+                                    <tbody>
+                                    <tr>
+                                        {% set problem = solve.problem %}
+                                        <td>{{ problem.title }}</td>
+                                        <td>{{ problem.category }}</td>
+                                        <td>{{ problem.value }}</td>
+                                        <td>{{ solve.user.username }}</td>
+                                        <td>
+                                            <span data-livestamp="{{ solve.date }}"></span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                {% endfor %}
+                            </table>
+                        </div>
+                        {% if current_user.uid == team.owner %}
+                            <div role="tabpanel" class="tab-pane" id="manage">
+                                {% if manage_team_form %}
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">Manage Team</h4>
+                                        </div>
+                                        <div class="panel-body">
+                                            <form method="POST">
+                                                {{ manage_team_form.csrf_token }}
+                                                <div class="row">
+                                                    <div class="col-xs-6">
+                                                        {{ render_field(manage_team_form.teamname) }}
+                                                        {{ render_field(manage_team_form.school) }}
+                                                        {{ manage_team_form.submit(class_="btn btn-primary") }}
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if disband_team_form %}
+                                    <div class="panel panel-warning">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">Disband Team</h4>
+                                        </div>
+                                        <div class="panel-body">
+                                            <p>Your team will still be visible as a "ghost" team. However, no one will be able to join it anymore.</p>
+                                            <form method="POST">
+                                                {{ disband_team_form.csrf_token }}
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        {% if disband_team_form.teamname.errors %}
+                                                            <p style="color:#F00;">
+                                                                {% for error in disband_team_form.teamname.errors %}
+                                                                    {{ error }}
+                                                                {% endfor %}
+                                                            </p>
+                                                        {% endif %}
+                                                        <div class="input-group">
+                                                            {{ disband_team_form.teamname(class_="form-control", placeholder="Confirm Team Name") }}
+                                                            <span class="input-group-btn">
+                                                            {{ disband_team_form.submit(class_="btn btn-danger") }}
+                                                        </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("[data-toggle=tooltip]").tooltip();
+            $("ul[role=tablist]").tab();
+            $("a[role=tab]").click(function (e) {
+                e.preventDefault();
+            });
+            {% if current_user.uid == team.owner %}
+                $.get("{{ url_for("teams.schools") }}", function (body) {
+                    var data = JSON.parse(body);
+                    $("input#manage-team-school").typeahead({
+                        source: data.map(function (school) {
+                            return school.name;
+                        })
+                    });
+                });
+            {% endif %}
+
+
+            google.charts.load("current", {"packages": ["corechart"]});
+            google.charts.setOnLoadCallback(drawChart);
+
+            function drawChart() {
+                var data = google.visualization.arrayToDataTable({{ team.get_score_progression() |tojson }});
+
+                var options = {
+                    title: "Score Progression",
+                    curveType: "line",
+                    legend: {position: "right"},
+                    vAxes: { 0: {title: "Score"} },
+                    hAxes: { 0: {title: "Time"} },
+                };
+
+                var chart = new google.visualization.LineChart(document.getElementById("progression_chart"));
+
+                chart.draw(data, options);
+            }
+        });
+
+    </script>
+{% endblock %}

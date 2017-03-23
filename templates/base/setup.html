@@ -1,0 +1,55 @@
+{% from "templates.html" import render_field %}
+{% extends "layout.html" %}
+{% block title %}Setup{% endblock %}
+
+{% block content %}
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">OpenCTF Setup</h2>
+                        </div>
+                        <div class="panel-body">
+                            <form method="POST">
+                                {{ setup_form.csrf_token }}
+                                <fieldset>
+                                    <legend>CTF Information</legend>
+                                    <p>You can still change these settings later.</p>
+                                    {{ render_field(setup_form.ctf_name) }}
+                                    {{ render_field(setup_form.ctf_description) }}
+                                    {{ render_field(setup_form.start_time) }}
+                                    {{ render_field(setup_form.end_time) }}
+                                    {{ render_field(setup_form.team_size) }}
+                                </fieldset>
+                                <fieldset>
+                                    <legend>Admin User Creation</legend>
+                                    {{ render_field(setup_form.name) }}
+                                    {{ render_field(setup_form.email) }}
+                                    {{ render_field(setup_form.username) }}
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            {{ render_field(setup_form.password) }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{ render_field(setup_form.confirm_password) }}
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <fieldset>
+                                    <legend>Verification</legend>
+                                    <p>Please confirm you have access to the server backend by running the following command
+                                        on the database:<br/>
+                                        <code>SELECT `value` FROM `config` WHERE `key`='setup_verification';</code></p>
+                                    {{ render_field(setup_form.verification) }}
+                                </fieldset>
+                                {{ setup_form.submit(class_="btn btn-primary") }}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

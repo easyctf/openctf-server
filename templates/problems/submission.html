@@ -1,0 +1,51 @@
+{% from "templates.html" import flashes %}
+{% extends "layout.html" %}
+{% block title %}Submission #{{ submission['id'] }} on {{ problem.title }}{% endblock %}
+
+{% block content %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.2/ace.js" integrity="sha384-niN+bRlaXMBoq/f5L4zKOEYGxuD0YRGBocto9LP2fB1UiMfxrymATRN4GqjVUt6J" crossorigin="anonymous"></script>
+    <div class="section">
+        <div class="container">
+            <div class="page-header">
+                <h1>Submission #{{ submission.id }} on {{ problem.title }}</h1>
+            </div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation"><a href="{{ url_for("problems.programming") }}" role="tab">Editor</a></li>
+                <li role="presentation"><a href="{{ url_for("problems.status") }}" role="tab">Submissions</a></li>
+                <li role="presentation" class="active"><a href="javascript:void(0);" role="tab">Submission #{{ submission.id }}</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active">
+                    {{ flashes() }}
+                    <label class="control-label">Overview</label>
+                    <p>
+                        Submitted by <a href="{{ url_for("users.profile", uid=submission.uid) }}" target="_blank" rel="noopener">{{ user.username }}</a>
+                        <time data-livestamp="{{ submission["time"] }}"></time>.
+                    </p>
+                    <label class="control-label">Code</label>
+                    <div id="code" style="width: 100%; min-height:20vh;">{{ submission["code"] }}</div>
+
+                    <p>
+                        <b>Status:</b> {{ submission["jobs"][-1]["status"] }}<br />
+                        {% if submission["jobs"][-1]["status"] == "finished" %}
+                            <b>Verdict:</b> {{ submission["jobs"][-1]["verdict"] }}<br />
+                            <b>Time:</b> {{ submission["jobs"][-1]["execution_time"] }}<br />
+                            <b>Memory:</b> {{ submission["jobs"][-1]["execution_memory"] }}<br />
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            var editor = ace.edit("code");
+            editor.setOptions({
+                fontFamily: "monospace",
+                fontSize: "10pt"
+            });
+            editor.setReadOnly(true);
+        });
+    </script>
+{% endblock %}

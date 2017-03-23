@@ -1,0 +1,98 @@
+{% from "templates.html" import render_field, render_generic_field, flashes %}
+{% extends "layout.html" %}
+{% block title %}Problems{% endblock %}
+
+{% block content %}
+    <style>
+        .problem img {
+            display: block;
+            max-height: 200px;
+            max-width: 100%;
+        }
+    </style>
+    <div class="section gradient">
+        <div class="container">
+            <div style="float: right;">
+                <h3>Points: {{ current_user.team.points() }}</h3>
+            </div>
+            <h1>Problems</h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            {{ flashes() }}
+            <div class="panel-group">
+                {% for problem in problems %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading" data-toggle="collapse" data-target="#{{ problem.pid }}_body">
+                            <h4 class="panel-title">
+                                <b>{{ problem.title }}</b> {{ problem.value }} points
+                                <div class="pull-right">{{ problem.category }} - {{ "Solved" if problem.solved else "Unsolved" }} ({{ problem.solves | length }} {{ "solve" if problem.solves | length == 1 else "solves" }})</div>
+                            </h4>
+                        </div>
+                        <div id="{{ problem.pid }}_body" class="panel-collapse collapse{{ "" if problem.solved else " in" }}">
+                            <div class="panel-body problem">
+                                <div>
+                                    <p>
+                                        <small>Written by
+                                            <b>{{ problem.author }}</b></small>
+                                    </p>
+                                    {{ problem.render_description(tid=current_user.tid) | safe }}
+                                </div>
+                                <form class="horizontal-form" method="POST">
+                                    {{ problem_submit_form.csrf_token }}
+                                    {{ problem_submit_form.pid(value=problem.pid) }}
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            {% if problem.programming %}
+                                                <div class="btn-group">
+                                                    <input onclick="toggle_hint({{ problem.pid }}); return false;" type="button" class="btn btn-info" value="Hint"/>
+                                                    {% if problem.solved %}
+                                                    {% else %}
+                                                        <a type="button" class="btn btn-success" href="{{ url_for("problems.programming") }}" target="_blank" rel="noopener">Open in Programming Editor
+                                                            <i class="fa fa-fw fa-external-link"></i></a>
+                                                    {% endif %}
+                                                    <a href="{{ url_for("problems.solves", pid=problem.pid) }}" type="button" class="btn btn-primary">View Solves</a>
+                                                </div>
+                                            {% else %}
+                                                <div class="input-group">
+                                                    <span class="input-group-btn">
+                                                        <input onclick="toggle_hint({{ problem.pid }}); return false;" type="button" class="btn btn-info" value="Hint"/>
+                                                    </span>
+                                                    <input class="form-control" name="flag" placeholder="{{ "Already solved!" if problem.solved else "Enter flag..." }}" autocomplete="off"
+                                                            {% if problem.solved %} disabled{% endif %}/>
+                                                    {% if not problem.solved %}
+                                                        <span class="input-group-btn">
+                                                            <button type="submit" class="btn btn-success">Submit <i class="fa fa-fw fa-arrow-right"></i></button>
+                                                            <a href="{{ url_for("problems.solves", pid=problem.pid) }}" type="button" class="btn btn-primary">View Solves</a>
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="input-group-btn">
+                                                            <a href="{{ url_for("problems.solves", pid=problem.pid) }}" type="button" class="btn btn-primary">View Solves</a>
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </form>
+                                <p></p>
+                                <div hidden id="{{ problem.pid }}_hint" class="well">
+                                    {{ problem.hint }}
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var toggle_hint = function (pid) {
+            $("#" + pid + "_hint").slideToggle("fast");
+        }
+
+
+    </script>
+{% endblock %}
