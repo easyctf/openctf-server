@@ -81,11 +81,15 @@ class Config(object):
         self.JUDGE_API_KEY = os.getenv("JUDGE_API_KEY", "")
 
         if testing or self.ENV == "test":
-            test_db_path = os.path.join(os.path.dirname(__file__), "test.db")
-            self.SQLALCHEMY_DATABASE_URI = "sqlite:///%s" % test_db_path
-            if not os.path.exists(test_db_path):
-                with open(test_db_path, "a"):
-                    os.utime(test_db_path, None)
+            if os.getenv("DATABASE_URL"):
+                self.SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+            else:
+                test_db_path = os.path.join(
+                    os.path.dirname(__file__), "test.db")
+                self.SQLALCHEMY_DATABASE_URI = "sqlite:///%s" % test_db_path
+                if not os.path.exists(test_db_path):
+                    with open(test_db_path, "a"):
+                        os.utime(test_db_path, None)
             self.TESTING = True
             self.WTF_CSRF_ENABLED = False
 
