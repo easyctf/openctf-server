@@ -1,0 +1,16 @@
+language: python
+sudo: required
+python:
+  - "2.7"
+install:
+  - pip install -r requirements.txt
+before_script:
+  - mysql -e 'create database openctf;'
+env:
+  - DATABASE_URL=mysql://root:@localhost/openctf
+script:
+  - coverage run --source . -m pytest -v && coverage report
+services:
+  - mysql
+notifications:
+  email: false
