@@ -22,7 +22,7 @@ def app(request):
 
 
 @pytest.fixture(scope="session")
-def client(app):
+def client(app, db):
     return app.test_client()
 
 
