@@ -28,13 +28,9 @@ def client(app):
 
 @pytest.fixture(scope="session")
 def db(request, app):
-    ctf_db.reflect()
-    ctf_db.drop_all()
     ctf_db.create_all()
 
     def teardown():
-        ctf_db.session.close_all()
-        ctf_db.reflect()
         ctf_db.drop_all()
 
     request.addfinalizer(teardown)
