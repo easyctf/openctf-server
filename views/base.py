@@ -46,7 +46,7 @@ def setup():
                               value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"))
         db.session.add(Config(key="setup_complete", value="True"))
         users.register_user(setup_form.name.data, setup_form.email.data, setup_form.username.data,
-                            setup_form.password.data, 0, admin=True)
+                            setup_form.password.data, 0, admin=True, send_email=False)
         db.session.commit()
         return redirect(url_for("base.index"))
     return render_template("base/setup.html", setup_form=setup_form)

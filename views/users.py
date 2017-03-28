@@ -30,7 +30,7 @@ def is_safe_url(target):
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))
     return test_url.scheme in ('http', 'https') and \
-           ref_url.netloc == test_url.netloc
+        ref_url.netloc == test_url.netloc
 
 
 def get_redirect_target():
@@ -269,16 +269,16 @@ def send_verification_email(username, email, verification_link):
         raise Exception(response["message"])
 
 
-def register_user(name, email, username, password, level, admin=False,
-                  **kwargs):
-    new_user = User(name=name, username=username, password=password,
-                    email=email, level=level, admin=admin)
+def register_user(name, email, username, password, level, admin=False, send_email=True, **kwargs):
+    new_user = User(name=name, username=username,
+                    password=password, email=email, level=level, admin=admin)
     for key, value in kwargs.items():
         setattr(new_user, key, value)
     code = util.generate_string()
     new_user.email_token = code
-    send_verification_email(username, email,
-                            url_for("users.verify", code=code, _external=True))
+    if send_email:
+        send_verification_email(username, email, url_for(
+            "users.verify", code=code, _external=True))
     db.session.add(new_user)
     db.session.commit()
     return new_user
