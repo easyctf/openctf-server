@@ -1,7 +1,5 @@
-class TestGeneral:
-
-    def test_sanity(self):
-        assert "sanity" > 0
+class TestGeneral(object):
 
     def test_index(self, client):
-        assert client.get("/").status_code == 200
+        r = client.get("/")
+        assert r.status_code == 200

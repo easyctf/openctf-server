@@ -1,15 +1,14 @@
 import pytest
 
-from app import app as ctf_app
-from config import Config as CTFConfig
-from models import db as ctf_db
+from openctf.app import create_app
+from openctf.config import Configuration
+from openctf.models import db as ctf_db
 
 
 @pytest.fixture(scope="session")
 def app(request):
-    app = ctf_app
-    app.config.from_object(CTFConfig(testing=True))
-    app.config["TESTING"] = True
+    app = create_app()
+    app.config.from_object(Configuration(testing=True))
 
     ctx = app.test_request_context()
     ctx.push()
