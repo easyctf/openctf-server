@@ -1,4 +1,4 @@
-class TestGeneral(object):
+class TestViewsBase(object):
 
     def test_index(self, client):
         r = client.get("/")

@@ -2,7 +2,9 @@
 omit =
     tests/*
     openctf/config.py
+    openctf/errors.py
     openctf/models.py
+    openctf/utils.py
 
 [report]
 exclude_lines =
