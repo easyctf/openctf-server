@@ -28,6 +28,11 @@ def profile():
     return "hi"
 
 
+@blueprint.route("/register", methods=["GET", "POST"])
+def register():
+    return "hi"
+
+
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired("Please enter your username.")])
     password = PasswordField("Password", validators=[InputRequired("Please enter your password.")])

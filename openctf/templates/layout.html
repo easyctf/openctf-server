@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        {% block title %}{% endblock %} - {{ ctf_name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="application-name" content="{{ ctf_name }}" />
+    <meta name="msapplication-tooltip" content="{{ ctf_name }}" />
+    <meta name="description" content="{{ ctf_description }}" />
+    <meta name="og:title" content="{{ self.title() }} - {{ ctf_name }}" />
+    <meta name="og:site_name" content="{{ ctf_name }}" />
+    <meta name="og:description" content="{{ ctf_description }}" /> {% if keywords %}
+    <meta name="keywords" content="{{ keywords }}" />{% endif %}
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Product+Sans:400,700" rel="stylesheet" type="text/css">
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js" integrity="sha384-R4/ztc4ZlRqWjqIuvf6RX5yb/v90qNGx6fS48N0tRxiGkqveZETq72KgDVJCp2TC" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js" integrity="sha256-LOnFraxKlOhESwdU/dX+K0GArwymUDups0czPWLEg4E=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js" integrity="sha256-4PIvl58L9q7iwjT654TQJM+C/acEyoG738iL8B8nhXg=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scroll/7.1.1/js/smooth-scroll.min.js" integrity="sha384-bznoxhRX5dRiE60JhQSru8t7g2RPG9lwqvyut8sjFFWmsAlp+R38e7DiATv1YyIu" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/livestamp/1.1.2/livestamp.min.js" integrity="sha256-8r65KJgULBDiZhwDydfWrEkx3yyV/grGsGzaekobngI=" crossorigin="anonymous"></script>
+    <style>
+        * {
+            font-family: "Product Sans";
+        }
+    </style>
+</head>
+
+<body>
+    <nav role="navigation" class="navbar navbar-inverse" id="navbar">
+        {% include "navbar.html" %}
+    </nav>
+    <div style="min-height: 80vh;">
+        {% block content %}{% endblock %}
+    </div>
+    <div class="footer">
+        {% include "footer.html" %}
+    </div>
+</body>
+
+</html>
