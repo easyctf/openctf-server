@@ -16,6 +16,7 @@ gitdb
 gitpython
 gunicorn
 markdown2
+mysqlclient
 onetimepass
 passlib
 paramiko
