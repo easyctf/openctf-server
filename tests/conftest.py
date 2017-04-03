@@ -1,8 +1,9 @@
 import pytest
 
+from flask_login import login_user
 from openctf.app import create_app
 from openctf.config import Configuration
-from openctf.models import db as ctf_db
+from openctf.models import db as Db, User
 
 
 @pytest.fixture(scope="session")
@@ -20,20 +21,37 @@ def app(request):
     return app
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def client(app, db):
     return app.test_client()
 
 
 @pytest.fixture(scope="session")
+def user(app, db):
+    test_user = User()
+    test_user.username = "user"
+    test_user.password = "pass"
+    db.session.add(test_user)
+    db.session.commit()
+    return test_user
+
+
+@pytest.fixture(scope="function")
+def authed_user(client, user):
+    auth = dict(username="user", password="pass", remember=True, submit="Login")
+    r = client.post("/users/login", data=auth)
+    return user
+
+
+@pytest.fixture(scope="session")
 def db(request, app):
-    ctf_db.create_all()
+    Db.create_all()
 
     def teardown():
-        ctf_db.drop_all()
+        Db.drop_all()
 
     request.addfinalizer(teardown)
-    return ctf_db
+    return Db
 
 
 @pytest.fixture(scope="class")

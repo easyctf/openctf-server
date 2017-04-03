@@ -15,6 +15,10 @@ class Configuration(object):
         self.TESTING = testing
         self.SECRET_KEY = self._get_secret_key()
         self.SQLALCHEMY_DATABASE_URI = self._get_database_url()
+        self.SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+        if testing:
+            self.WTF_CSRF_ENABLED = False
 
     def _get_secret_key(self):
         # Key exists in environment.
@@ -41,7 +45,6 @@ class Configuration(object):
     def _get_database_url():
         url = os.getenv("DATABASE_URL")
         if not url:
-            sys.stderr.write(
-                "DATABASE_URL not set; MySQL database could not be located.")
+            sys.stderr.write("DATABASE_URL not set; MySQL database could not be located.")
             sys.exit(1)
         return url
