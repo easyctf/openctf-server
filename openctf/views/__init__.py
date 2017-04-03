@@ -1,2 +1,2 @@
-import views.base
-import views.users
+import openctf.views.base
+import openctf.views.users

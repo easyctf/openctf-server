@@ -15,6 +15,7 @@ class Configuration(object):
         self.TESTING = testing
         self.SECRET_KEY = self._get_secret_key()
         self.SQLALCHEMY_DATABASE_URI = self._get_database_url()
+        self.SQLALCHEMY_TRACK_MODIFICATIONS = False
 
         if testing:
             self.WTF_CSRF_ENABLED = False

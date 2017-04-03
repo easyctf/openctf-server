@@ -1,6 +1,6 @@
-import app
-import config
-import errors
-import models
-import users
-import views
+import openctf.app
+import openctf.config
+import openctf.errors
+import openctf.models
+import openctf.users
+import openctf.views
