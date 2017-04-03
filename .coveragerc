@@ -1,6 +1,7 @@
 [run]
 omit =
     tests/*
+    manage.py
     openctf/config.py
     openctf/errors.py
     openctf/models.py
