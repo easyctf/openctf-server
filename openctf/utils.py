@@ -1,7 +1,17 @@
+import random
+import re
+from string import hexdigits
 from urllib.parse import urljoin, urlparse
 
 from flask import redirect, request, url_for
 
+VALID_USERNAME = re.compile(r"^[A-Za-z_][A-Za-z\d_]*$")
+VALID_PROBLEM_NAME = re.compile(r"^[a-z_][a-z\-\d_]*$")
+
+
+def generate_string(length=32, alpha=hexdigits):
+    characters = [random.choice(alpha) for x in range(length)]
+    return "".join(characters)
 
 # http://flask.pocoo.org/snippets/62/
 

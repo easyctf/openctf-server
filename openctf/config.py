@@ -18,8 +18,7 @@ class Configuration(object):
         self.REDIS_URL = self._get_redis_url()
 
         self.EMAIL_VERIFICATION_REQUIRED = os.getenv("EMAIL_VERIFICATION_REQUIRED", "0") == "1"
-        if self.EMAIL_VERIFICATION_REQUIRED:
-            self.MAILGUN_API_KEY, self.MAILGUN_DOMAIN = self._get_mailgun_credentials()
+        self.MAILGUN_API_KEY, self.MAILGUN_DOMAIN = self._get_mailgun_credentials(required=self.EMAIL_VERIFICATION_REQUIRED)
 
         self.TESTING = testing
         if testing:
@@ -47,14 +46,14 @@ class Configuration(object):
         return key
 
     @staticmethod
-    def _get_mailgun_credentials():
+    def _get_mailgun_credentials(required=False):
         api_key = os.getenv("MAILGUN_API_KEY")
-        if not api_key:
+        if required and not api_key:
             sys.stderr.write("EMAIL_VERIFICATION_REQUIRED set but no MAILGUN_API_KEY supplied.\n")
             sys.exit(1)
         domain = os.getenv("MAILGUN_DOMAIN")
-        if not domain:
-            sys.stderr.write("EMAIL_VERIFICATION_REQUIRED set but no MAILGUN_DOMAIN supplied.\n")
+        if (required or api_key) and not domain:
+            sys.stderr.write("EMAIL_VERIFICATION_REQUIRED or MAILGUN_API_KEY set but no MAILGUN_DOMAIN supplied.\n")
             sys.exit(1)
         return api_key, domain
 
