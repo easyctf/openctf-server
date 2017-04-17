@@ -1,5 +1,5 @@
-from flask import (Blueprint, current_app, flash, redirect, render_template,
-                   request, url_for)
+from flask import (Blueprint, abort, current_app, flash, redirect,
+                   render_template, request, url_for)
 from flask_login import current_user, login_required, login_user
 from flask_wtf import FlaskForm
 from sqlalchemy import func
@@ -7,10 +7,10 @@ from wtforms import ValidationError
 from wtforms.fields import *
 from wtforms.validators import *
 
+from openctf.constants import UserLevel, UserLevelNames
 from openctf.models import User, db
 from openctf.utils import (VALID_USERNAME, generate_string,
                            get_redirect_target, redirect_back)
-from openctf.constants import UserLevel, UserLevelNames
 
 blueprint = Blueprint("users", __name__, template_folder="templates")
 

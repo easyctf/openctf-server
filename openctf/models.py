@@ -1,3 +1,4 @@
+import time
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
@@ -80,3 +81,7 @@ class User(db.Model):
     @password.setter
     def password(self, password):
         self._password = bcrypt.encrypt(password, rounds=10)
+
+    @hybrid_property
+    def register_time(self):
+        return int(time.mktime(self._register_time.timetuple()))
