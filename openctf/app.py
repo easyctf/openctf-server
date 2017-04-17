@@ -20,7 +20,7 @@ def create_app(debug=False, testing=False):
         db.init_app(app)
 
         from openctf.services import cache, login_manager
-        cache.init_app(app)
+        # cache.init_app(app)
         login_manager.init_app(app)
 
         from openctf import views

@@ -31,3 +31,7 @@ class TestViewsUsers(object):
     def test_register_page(self, client):
         r = client.get("/users/register")
         assert r.status_code == 200
+
+    def test_forgot_page(self, client):
+        r = client.get("/users/forgot")
+        assert r.status_code == 200
