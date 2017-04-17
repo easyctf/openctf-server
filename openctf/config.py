@@ -12,13 +12,16 @@ class Configuration(object):
         else:
             self.app_root = pathlib.Path(app_root)
 
-        self.TESTING = testing
         self.SECRET_KEY = self._get_secret_key()
         self.SQLALCHEMY_DATABASE_URI = self._get_database_url()
         self.SQLALCHEMY_TRACK_MODIFICATIONS = False
-
         self.REDIS_URL = self._get_redis_url()
 
+        self.EMAIL_VERIFICATION_REQUIRED = os.getenv("EMAIL_VERIFICATION_REQUIRED", "0") == "1"
+        if self.EMAIL_VERIFICATION_REQUIRED:
+            self.MAILGUN_API_KEY, self.MAILGUN_DOMAIN = self._get_mailgun_credentials()
+
+        self.TESTING = testing
         if testing:
             self.WTF_CSRF_ENABLED = False
 
@@ -42,6 +45,18 @@ class Configuration(object):
             else:
                 key = contents
         return key
+
+    @staticmethod
+    def _get_mailgun_credentials():
+        api_key = os.getenv("MAILGUN_API_KEY")
+        if not api_key:
+            sys.stderr.write("EMAIL_VERIFICATION_REQUIRED set but no MAILGUN_API_KEY supplied.\n")
+            sys.exit(1)
+        domain = os.getenv("MAILGUN_DOMAIN")
+        if not domain:
+            sys.stderr.write("EMAIL_VERIFICATION_REQUIRED set but no MAILGUN_DOMAIN supplied.\n")
+            sys.exit(1)
+        return api_key, domain
 
     @staticmethod
     def _get_database_url():
