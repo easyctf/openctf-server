@@ -3,13 +3,18 @@ import os
 from flask import Flask
 
 
-def create_app():
+def create_app(debug=False, testing=False):
     app = Flask(__name__)
 
     with app.app_context():
+        if debug:
+            app.debug = True
+            app.config["DEBUG"] = True
+            app.config["TEMPLATES_AUTO_RELOAD"] = True
+
         from openctf.config import Configuration
         app.config.from_object(Configuration(
-            app_root=os.path.dirname(os.path.abspath(__file__))))
+            app_root=os.path.dirname(os.path.abspath(__file__)), testing=testing))
 
         from openctf.models import db, Config
         db.init_app(app)

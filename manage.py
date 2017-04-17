@@ -4,7 +4,7 @@ from flask_script import Manager, Server
 from openctf.app import create_app
 from openctf.models import db
 
-app = create_app()
+app = create_app(debug=True)
 migrate = Migrate(app, db)
 
 manager = Manager(app)

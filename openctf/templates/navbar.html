@@ -1,45 +1,30 @@
-<!--<div class="container">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-content" aria-expanded="false">
+<nav role="navigation" class="navbar navbar-inverse" id="navbar">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-content" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="{{ url_for('base.index') }}">{{ ctf_name }}</a>
-    </div>
-    <div id="navbar-content" class="collapse navbar-collapse">
-        <ul class="nav navbar-nav">
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-            {% if current_user.is_authenticated %}
-            {% else %}
-                <li><a href="{{ url_for('users.register') }}">Register</a></li>
-                <li><a href="{{ url_for('users.login') }}">Login</a></li>
-            {% endif %}
-        </ul>
-    </div>
-</div>-->
-
-<div class="ui large inverted secondary stackable menu">
-    <a class="active item">
-    Home
-  </a>
-    <a class="item">
-    Messages
-  </a>
-    <a class="item">
-    Friends
-  </a>
-    <div class="right menu">
-        <div class="item">
-            <div class="ui icon input">
-                <input type="text" placeholder="Search...">
-                <i class="search link icon"></i>
-            </div>
+            <a class="navbar-brand" href="index.html">EasyCTF 2017</a>
         </div>
-        <a class="ui item">
-      Logout
-    </a>
+        <div id="navbar-content" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-fw fa-info-circle"></i> About<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="about.1"><i class="fa fa-fw fa-info-circle"></i> About</a></li>
+                        <li><a href="about/sponsors"><i class="fa fa-fw fa-rocket"></i> Sponsors</a></li>
+                        <li><a href="about/prizes"><i class="fa fa-fw fa-trophy"></i> Prizes</a></li>
+                        <li><a href="about/rules"><i class="fa fa-fw fa-gavel"></i> Rules</a></li>
+                    </ul>
+                </li>
+                <li><a href="https://writeups.easyctf.com"><i class="fa fa-fw fa-pencil"></i> Writeups</a></li>
+                <li><a href="scoreboard"><i class="fa fa-fw fa-bars"></i> Scoreboard</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            </ul>
+        </div>
     </div>
-</div>
+</nav>
