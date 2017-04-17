@@ -12,6 +12,11 @@ from openctf.utils import get_redirect_target, redirect_back
 blueprint = Blueprint("users", __name__, template_folder="templates")
 
 
+@blueprint.route("/forgot")
+def forgot():
+    return "hi"
+
+
 @blueprint.route("/login", methods=["GET", "POST"])
 def login():
     login_form = LoginForm()

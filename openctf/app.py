@@ -1,4 +1,5 @@
 import os
+
 from flask import Flask
 
 
@@ -10,10 +11,11 @@ def create_app():
         app.config.from_object(Configuration(
             app_root=os.path.dirname(os.path.abspath(__file__))))
 
-        from openctf.models import db
+        from openctf.models import db, Config
         db.init_app(app)
 
-        from openctf.users import login_manager
+        from openctf.services import cache, login_manager
+        cache.init_app(app)
         login_manager.init_app(app)
 
         from openctf import views
@@ -22,6 +24,13 @@ def create_app():
 
         from openctf.errors import handle_errors
         handle_errors(app)
+
+        @app.context_processor
+        def inject_config():
+            config = {
+                "ctf_name": Config.get("ctf_name", "OpenCTF")
+            }
+            return config
 
         return app
 

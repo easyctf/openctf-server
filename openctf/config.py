@@ -17,6 +17,8 @@ class Configuration(object):
         self.SQLALCHEMY_DATABASE_URI = self._get_database_url()
         self.SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+        self.REDIS_URL = self._get_redis_url()
+
         if testing:
             self.WTF_CSRF_ENABLED = False
 
@@ -45,6 +47,14 @@ class Configuration(object):
     def _get_database_url():
         url = os.getenv("DATABASE_URL")
         if not url:
-            sys.stderr.write("DATABASE_URL not set; MySQL database could not be located.")
+            sys.stderr.write("DATABASE_URL not set; MySQL database could not be located.\n")
+            sys.exit(1)
+        return url
+
+    @staticmethod
+    def _get_redis_url():
+        url = os.getenv("REDIS_URL")
+        if not url:
+            sys.stderr.write("OpenCTF requires Redis. Please specify the REDIS_URL variable.\n")
             sys.exit(1)
         return url

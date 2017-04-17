@@ -4,9 +4,32 @@ from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import bcrypt
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from openctf.users import login_manager
+from openctf.services import cache, login_manager
 
 db = SQLAlchemy()
+
+
+class Config(db.Model):
+    __tablename__ = "config"
+    cid = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.Unicode(32), index=True)
+    value = db.Column(db.Text)
+
+    @classmethod
+    def get(cls, key, default=None):
+        config = cls.query.filter_by(key=key).first()
+        if config is None:
+            return default
+        return str(config.value)
+
+
+class Team(db.Model):
+    __tablename__ = "teams"
+    id = db.Column(db.Integer, index=True, primary_key=True)
+    teamname = db.Column(db.Unicode(32), unique=True)
+    affiliation = db.Column(db.Unicode(48))
+    captain = db.Column(db.Integer)
+    members = db.relationship("User", back_populates="team")
 
 
 class User(db.Model):
@@ -57,12 +80,3 @@ class User(db.Model):
     @password.setter
     def password(self, password):
         self._password = bcrypt.encrypt(password, rounds=10)
-
-
-class Team(db.Model):
-    __tablename__ = "teams"
-    id = db.Column(db.Integer, index=True, primary_key=True)
-    teamname = db.Column(db.Unicode(32), unique=True)
-    affiliation = db.Column(db.Unicode(48))
-    captain = db.Column(db.Integer)
-    members = db.relationship("User", back_populates="team")
