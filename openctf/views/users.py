@@ -26,6 +26,7 @@ def login():
     login_form = LoginForm()
     next = get_redirect_target()
     if login_form.validate_on_submit():
+        # TODO: make sure user's email is verified!
         login_user(login_form.get_user(), remember=login_form.remember.data)
         return redirect_back("users.profile")
     return render_template("users/login.html", login_form=login_form, next=next)
@@ -48,10 +49,12 @@ def register():
                                  register_form.username.data,
                                  register_form.password.data,
                                  int(register_form.level.data), admin=False)
-        if not current_app.config["EMAIL_VERIFICATION_REQUIRED"]:
+        if current_app.config["EMAIL_VERIFICATION_REQUIRED"]:
+            # Make sure they verify their email first.
             flash("You've registered! Check your inbox for a confirmation email.", "success")
             return redirect(url_for("users.login"))
         else:
+            # Go ahead and log the user in.
             login_user(new_user)
             return redirect(url_for("users.profile"))
     return render_template("users/register.html", register_form=register_form)
