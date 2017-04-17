@@ -4,7 +4,7 @@ OpenCTF // Server
 The web application for [OpenCTF](https://github.com/easyctf/openctf).
 
 [![Build Status](https://api.travis-ci.org/EasyCTF/openctf-server.svg?branch=master)](https://travis-ci.org/EasyCTF/openctf-server)
-[![Coverage Status](https://coveralls.io/repos/github/EasyCTF/openctf-server/badge.svg?branch=rebuild)](https://coveralls.io/github/EasyCTF/openctf-server?branch=rebuild)
+[![Coverage Status](https://coveralls.io/repos/github/EasyCTF/openctf-server/badge.svg)](https://coveralls.io/github/EasyCTF/openctf-server)
 
 Tests
 -----
