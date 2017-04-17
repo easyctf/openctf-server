@@ -24,7 +24,11 @@
 <body>
     {% include "navbar.html" %}
 
-    {% block content %}{% endblock %}
+    <div style="min-height:80vh;">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% include "footer.html" %}
 </body>
 
 </html>
