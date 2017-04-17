@@ -10,6 +10,7 @@ from wtforms.validators import *
 from openctf.models import User, db
 from openctf.utils import (VALID_USERNAME, generate_string,
                            get_redirect_target, redirect_back)
+from openctf.constants import UserLevel, UserLevelNames
 
 blueprint = Blueprint("users", __name__, template_folder="templates")
 
@@ -32,10 +33,16 @@ def login():
     return render_template("users/login.html", login_form=login_form, next=next)
 
 
-@blueprint.route("/profile", methods=["GET", "POST"])
-@login_required
-def profile():
-    return "hi"
+@blueprint.route("/profile")
+@blueprint.route("/profile/<int:id>")
+def profile(id=None):
+    if id is None and current_user.is_authenticated:
+        return redirect(url_for("users.profile", id=current_user.id))
+    user = User.get_by_id(id)
+    if user is None:
+        abort(404)
+    user.type = UserLevelNames[UserLevel(user.level)]
+    return render_template("users/profile.html", user=user)
 
 
 @blueprint.route("/register", methods=["GET", "POST"])
@@ -58,6 +65,11 @@ def register():
             login_user(new_user)
             return redirect(url_for("users.profile"))
     return render_template("users/register.html", register_form=register_form)
+
+
+@blueprint.route("/settings")
+def settings():
+    return "hi"
 
 
 @blueprint.route("/verify/<string:code>")
