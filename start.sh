@@ -16,6 +16,6 @@ if [ "$COMMAND" == "runserver" ]; then
   else
     exec bash -c 'python3 manage.py db upgrade; gunicorn --bind 0.0.0.0:80 -w 4 "openctf.app:create_app()"'
   fi
-# elif [ "$COMMAND" == "compute" ]; then
-#   exec bash -c "DATABASE_URL=$DATABASE_URL python3 manage.py db upgrade && python3 manage.py compute worker"
+elif [ "$COMMAND" == "worker" ]; then
+  exec bash -c "DATABASE_URL=$DATABASE_URL python3 manage.py db upgrade && python3 manage.py worker"
 fi

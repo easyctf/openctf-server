@@ -11,7 +11,7 @@
         </div>
         <div id="navbar-content" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="javascript:void(0);">Scoreboard</a></li>
+                <li><a href="{{ url_for('base.scoreboard') }}">Scoreboard</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}

@@ -20,6 +20,11 @@ def index():
     return render_template("base/index.html")
 
 
+@blueprint.route("/scoreboard")
+def scoreboard():
+    return render_template("base/scoreboard.html")
+
+
 @blueprint.route("/setup", methods=["GET", "POST"])
 def setup():
     if Config.get("setup_complete"):
