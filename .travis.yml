@@ -8,7 +8,7 @@ install:
 before_script:
   - mysql -e 'create database openctf;'
 env:
-  - REDIS_URL=redis://localhost:6379 DATABASE_URL=mysql://root:@localhost/openctf
+  - FILESTORE_URL=http://filestore:8000 REDIS_URL=redis://localhost:6379 DATABASE_URL=mysql://root:@localhost/openctf
 script:
   - coverage run --source . -m pytest -v && coverage report
 after_success:
