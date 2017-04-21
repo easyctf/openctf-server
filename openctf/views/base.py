@@ -9,6 +9,7 @@ from wtforms.fields import (IntegerField, PasswordField, StringField,
 from wtforms.validators import Email, EqualTo, InputRequired, Length, Optional
 
 from openctf.models import Config, db
+from openctf.stats import compute_all_scoreboard, compute_ranked_scoreboard
 from openctf.utils import VALID_USERNAME, generate_string
 from openctf.views.users import register_user
 
@@ -22,6 +23,8 @@ def index():
 
 @blueprint.route("/scoreboard")
 def scoreboard():
+    compute_all_scoreboard.apply_async()
+    compute_ranked_scoreboard.apply_async()
     return render_template("base/scoreboard.html")
 
 

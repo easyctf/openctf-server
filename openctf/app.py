@@ -14,13 +14,15 @@ def create_app(debug=False, testing=False):
 
         from openctf.config import Configuration
         app.config.from_object(Configuration(
-            app_root=os.path.dirname(os.path.abspath(__file__)), testing=testing))
+            app_root=os.path.dirname(os.path.abspath(__file__)),
+            testing=testing))
 
         from openctf.models import db, Config
         db.init_app(app)
 
-        from openctf.services import cache, login_manager
-        # cache.init_app(app)
+        from openctf.services import cache, celery, login_manager
+        cache.init_app(app)
+        celery.init_app(app)
         login_manager.init_app(app)
 
         from openctf import views

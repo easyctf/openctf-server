@@ -3,4 +3,5 @@ import openctf.config
 import openctf.errors
 import openctf.models
 import openctf.services
+import openctf.stats
 import openctf.views

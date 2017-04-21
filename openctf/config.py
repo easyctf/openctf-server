@@ -13,9 +13,11 @@ class Configuration(object):
             self.app_root = pathlib.Path(app_root)
 
         self.SECRET_KEY = self._get_secret_key()
+        self.CACHE_TYPE = "redis"
+        self.CACHE_REDIS_URL = self._get_redis_url()
         self.SQLALCHEMY_DATABASE_URI = self._get_database_url()
         self.SQLALCHEMY_TRACK_MODIFICATIONS = False
-        self.REDIS_URL = self._get_redis_url()
+        self.REDIS_URL = self.CELERY_BROKER_URL = self.CELERY_RESULT_BACKEND = self._get_redis_url()
         self.FILESTORE_URL = self._get_filestore_url()
 
         self.EMAIL_VERIFICATION_REQUIRED = os.getenv("EMAIL_VERIFICATION_REQUIRED", "0") == "1"
