@@ -39,6 +39,11 @@ def redirect_back(endpoint, **values):
     return redirect(target)
 
 
+def sendmail(recipient, subject, body):
+    # TODO Implement this
+    return
+
+
 def generate_identicon(hstring):
     hstring = hstring.strip().lower()
     h = hashlib.sha1(hstring.encode("utf-8")).hexdigest()

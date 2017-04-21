@@ -56,14 +56,12 @@ class SetupForm(FlaskForm):
     password = PasswordField("Password", validators=[InputRequired("Please enter a password.")])
     confirm_password = PasswordField("Confirm Password", validators=[InputRequired("Please confirm your password."), EqualTo("password", "Please enter the same password.")])
 
-    verification = StringField("Verification", validators=[
-                               InputRequired("Please enter a verification code.")])
+    verification = StringField("Verification", validators=[InputRequired("Please enter a verification code.")])
     submit = SubmitField("Create CTF")
 
     def validate_username(self, field):
         if not VALID_USERNAME.match(field.data):
-            raise ValidationError(
-                "Username must be contain letters, numbers, or _, and not start with a number.")
+            raise ValidationError("Username must be contain letters, numbers, or _, and not start with a number.")
 
     def validate_verification(self, field):
         code = Config.get("setup_verification")

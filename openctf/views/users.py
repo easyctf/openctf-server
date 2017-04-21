@@ -10,7 +10,7 @@ from wtforms.validators import *
 from openctf.constants import UserLevel, UserLevelNames
 from openctf.models import User, db
 from openctf.utils import (VALID_USERNAME, generate_string,
-                           get_redirect_target, redirect_back)
+                           get_redirect_target, redirect_back, sendmail)
 
 blueprint = Blueprint("users", __name__, template_folder="templates")
 
@@ -78,7 +78,7 @@ def register():
 
 @blueprint.route("/settings")
 def settings():
-    return "hi"
+    return render_template("users/settings.html")
 
 
 @blueprint.route("/verify/<string:code>")
@@ -88,7 +88,6 @@ def verify(code):
         flash("You've already verified your email.", "info")
     elif current_user.email_token == code:
         current_user.email_verified = True
-        db.session.add(current_user)
         db.session.commit()
         flash("Email verified!", "success")
     else:
@@ -108,6 +107,17 @@ def register_user(name, email, username, password, level, admin=False, send_emai
     db.session.add(new_user)
     db.session.commit()
     return new_user
+
+
+def send_verification_email(username, email, verification_link):
+    ctf_name = Config.get("ctf_name")
+    subject = "[ACTION REQUIRED] Email Verification - %s" % ctf_name
+    body = string.Template(open("email.txt").read()).substitute({
+        "link": verification_link,
+        "ctf_name": ctf_name,
+        "username": username
+    })
+    response = sendmail(email, subject, body)
 
 
 class LoginForm(FlaskForm):

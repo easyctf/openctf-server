@@ -43,6 +43,19 @@ def authed_user(client, user):
     return user
 
 
+@pytest.fixture(scope="function")
+def admin_user(client, db):
+    admin_user = User()
+    admin_user.admin = True
+    admin_user.username = "admin"
+    admin_user.password = "pass"
+    db.session.add(admin_user)
+    db.session.commit()
+    auth = dict(username="admin", password="pass", remember=True, submit="Login")
+    r = client.post("/users/login", data=auth)
+    return user
+
+
 @pytest.fixture(scope="session")
 def db(request, app):
     Db.create_all()
