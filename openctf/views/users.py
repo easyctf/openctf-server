@@ -1,6 +1,6 @@
 from flask import (Blueprint, abort, current_app, flash, redirect,
                    render_template, request, url_for)
-from flask_login import current_user, login_required, login_user
+from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 from sqlalchemy import func
 from wtforms import ValidationError
@@ -33,6 +33,12 @@ def login():
     return render_template("users/login.html", login_form=login_form, next=next)
 
 
+@blueprint.route("/logout", methods=["GET"])
+def logout():
+    logout_user()
+    return redirect(url_for("base.index"))
+
+
 @blueprint.route("/profile")
 @blueprint.route("/profile/<int:id>")
 def profile(id=None):
@@ -41,7 +47,10 @@ def profile(id=None):
     user = User.get_by_id(id)
     if user is None:
         abort(404)
-    user.type = UserLevelNames[UserLevel(user.level)]
+    level = user.level
+    if not level:
+        level = -1
+    user.type = UserLevelNames[UserLevel(level)]
     return render_template("users/profile.html", user=user)
 
 

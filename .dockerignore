@@ -1,9 +1,11 @@
-__pycache__
+__pycache__*
+**/__pycache__*
 *.pyc
+**/*.pyc
 .data
 .cache
-.coverage
 .vscode
 .secret_key
 coverage.xml
-environment.sh
+tests
+.git

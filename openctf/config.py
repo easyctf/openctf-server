@@ -16,12 +16,16 @@ class Configuration(object):
         self.SQLALCHEMY_DATABASE_URI = self._get_database_url()
         self.SQLALCHEMY_TRACK_MODIFICATIONS = False
         self.REDIS_URL = self._get_redis_url()
+        self.FILESTORE_URL = self._get_filestore_url()
 
         self.EMAIL_VERIFICATION_REQUIRED = os.getenv("EMAIL_VERIFICATION_REQUIRED", "0") == "1"
         self.MAILGUN_API_KEY, self.MAILGUN_DOMAIN = self._get_mailgun_credentials(required=self.EMAIL_VERIFICATION_REQUIRED)
 
         self.TESTING = testing
         if testing:
+            test_db = os.getenv("TEST_DATABASE_URL")
+            if test_db:
+                self.SQLALCHEMY_DATABASE_URI = test_db
             self.WTF_CSRF_ENABLED = False
 
     def _get_secret_key(self):
@@ -56,6 +60,14 @@ class Configuration(object):
             sys.stderr.write("EMAIL_VERIFICATION_REQUIRED or MAILGUN_API_KEY set but no MAILGUN_DOMAIN supplied.\n")
             sys.exit(1)
         return api_key, domain
+
+    @staticmethod
+    def _get_filestore_url():
+        url = os.getenv("FILESTORE_URL")
+        if not url:
+            sys.stderr.write("OpenCTF depends on filestore, but FILESTORE_URL is not set.\n")
+            sys.exit(1)
+        return url
 
     @staticmethod
     def _get_database_url():

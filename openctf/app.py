@@ -25,6 +25,7 @@ def create_app(debug=False, testing=False):
 
         from openctf import views
         app.register_blueprint(views.base.blueprint)
+        app.register_blueprint(views.admin.blueprint, url_prefix="/admin")
         app.register_blueprint(views.users.blueprint, url_prefix="/users")
 
         from openctf.errors import handle_errors

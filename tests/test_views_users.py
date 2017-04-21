@@ -25,12 +25,12 @@ class TestViewsUsers(object):
 
     def test_profile_unauthenticated(self, client):
         r = client.get("/users/profile")
-        assert r.status_code == 302
+        assert r.status_code == 404
 
     def test_profile_authenticated(self, client, authed_user):
         r = client.get("/users/profile")
         print(r.data)
-        assert r.status_code == 200
+        assert r.status_code == 302
 
     def test_register_page(self, client):
         r = client.get("/users/register")

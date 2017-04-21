@@ -14,8 +14,29 @@
                 <li><a href="javascript:void(0);">Scoreboard</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="{{ url_for('users.register') }}">Register</a></li>
-                <li><a href="{{ url_for('users.login') }}">Login</a></li>
+                {% if current_user.is_authenticated %}
+                    {% if current_user.admin %}
+                        <li class="dropdown">
+                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Admin<span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ url_for('admin.settings') }}">CTF Settings</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            {{ current_user.username }}<span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="{{ url_for('users.profile') }}">My Profile</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{{ url_for('users.settings') }}">Settings</a></li>
+                            <li><a href="{{ url_for('users.logout') }}">Logout</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li><a href="{{ url_for('users.register') }}">Register</a></li>
+                    <li><a href="{{ url_for('users.login') }}">Login</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>
